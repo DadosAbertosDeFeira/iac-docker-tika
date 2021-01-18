@@ -1,19 +1,17 @@
-FROM ubuntu:focal as base:v1
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y --no-install-recommends install gnupg2 wget \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+FROM ubuntu:focal as dependencies 
 
-FROM base:v1 as dependencies:v1
 ARG JRE='openjdk-14-jre-headless'
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends $JRE gdal-bin tesseract-ocr \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y --no-install-recommends install gnupg2 wget \
+        $JRE gdal-bin tesseract-ocr \
         tesseract-ocr-eng tesseract-ocr-por \
+        # Fonts
+        && echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
+        && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y xfonts-utils fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer wget cabextract \
+        && apt-get clean -y \
         && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y xfonts-utils fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer wget cabextract \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-FROM dependencies:v1 as fetch_tika
+FROM dependencies as fetch_tika
 ARG TIKA_VERSION
 ARG CHECK_SIG=true
 
@@ -33,8 +31,8 @@ RUN wget -t 10 --max-redirect 1 --retry-connrefused -qO- https://downloads.apach
 
 RUN if [ "$CHECK_SIG" = "true" ] ; then gpg --verify /tika-server-${TIKA_VERSION}.jar.asc /tika-server-${TIKA_VERSION}.jar; fi
 
-FROM dependencies:v1 as runtime
-RUN apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+FROM dependencies as runtime
+#RUN apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ARG TIKA_VERSION
 ENV TIKA_VERSION=$TIKA_VERSION
 COPY --from=fetch_tika /tika-server-${TIKA_VERSION}.jar /tika-server-${TIKA_VERSION}.jar
