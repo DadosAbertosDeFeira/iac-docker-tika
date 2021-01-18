@@ -1,14 +1,17 @@
 FROM ubuntu:focal as base
-RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y --no-install-recommends install gnupg2 wget \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 FROM base as dependencies
 ARG JRE='openjdk-14-jre-headless'
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install $JRE gdal-bin tesseract-ocr \
-        tesseract-ocr-eng tesseract-ocr-por
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends $JRE gdal-bin tesseract-ocr \
+        tesseract-ocr-eng tesseract-ocr-por \
+        && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xfonts-utils fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer wget cabextract
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y xfonts-utils fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer wget cabextract \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 FROM dependencies as fetch_tika
 ARG TIKA_VERSION
@@ -20,14 +23,13 @@ ENV NEAREST_TIKA_SERVER_URL="https://www.apache.org/dyn/closer.cgi/tika/tika-ser
     ARCHIVE_TIKA_SERVER_ASC_URL="https://archive.apache.org/dist/tika/tika-server-${TIKA_VERSION}.jar.asc" \
     TIKA_VERSION=$TIKA_VERSION
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install gnupg2 wget \
-    && wget -t 10 --max-redirect 1 --retry-connrefused -qO- https://downloads.apache.org/tika/KEYS | gpg --import \
+RUN wget -t 10 --max-redirect 1 --retry-connrefused -qO- https://downloads.apache.org/tika/KEYS | gpg --import \
     && wget -t 10 --max-redirect 1 --retry-connrefused $NEAREST_TIKA_SERVER_URL -O /tika-server-${TIKA_VERSION}.jar || rm /tika-server-${TIKA_VERSION}.jar \
     && sh -c "[ -f /tika-server-${TIKA_VERSION}.jar ]" || wget $ARCHIVE_TIKA_SERVER_URL -O /tika-server-${TIKA_VERSION}.jar || rm /tika-server-${TIKA_VERSION}.jar \
     && sh -c "[ -f /tika-server-${TIKA_VERSION}.jar ]" || exit 1 \
     && wget -t 10 --max-redirect 1 --retry-connrefused $DEFAULT_TIKA_SERVER_ASC_URL -O /tika-server-${TIKA_VERSION}.jar.asc  || rm /tika-server-${TIKA_VERSION}.jar.asc \
     && sh -c "[ -f /tika-server-${TIKA_VERSION}.jar.asc ]" || wget $ARCHIVE_TIKA_SERVER_ASC_URL -O /tika-server-${TIKA_VERSION}.jar.asc || rm /tika-server-${TIKA_VERSION}.jar.asc \
-    && sh -c "[ -f /tika-server-${TIKA_VERSION}.jar.asc ]" || exit 1;
+    && sh -c "[ -f /tika-server-${TIKA_VERSION}.jar.asc ]" || exit 1 ;
 
 RUN if [ "$CHECK_SIG" = "true" ] ; then gpg --verify /tika-server-${TIKA_VERSION}.jar.asc /tika-server-${TIKA_VERSION}.jar; fi
 
