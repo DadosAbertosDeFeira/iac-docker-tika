@@ -22,6 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: Dockerfile
+          
    build:
      runs-on: ubuntu-latest
      steps:
