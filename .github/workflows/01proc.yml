@@ -1,0 +1,4 @@
+- name: Docker Lint
+  uses: hadolint/hadolint
+  with:
+    target: Dockerfile
