@@ -11,6 +11,7 @@ on:
 
 jobs:
   lint:
+    name: Lint do Dockerfile
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,8 +23,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: Dockerfile
-          
+
    build:
+     name: Build do Container
      runs-on: ubuntu-latest
      steps:
        - name: Checkout
