@@ -15,6 +15,11 @@ on:
         default: 1.25
 
 jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Tika v: ${{ github.event.inputs.version }}"
   lint:
     name: Lint do Dockerfile
     runs-on: ubuntu-latest
