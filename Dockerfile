@@ -1,8 +1,11 @@
-FROM ubuntu:focal as dependencies 
+FROM ubuntu:focal as dependencies
+
 
 ARG JRE='openjdk-14-jre-headless'
 ARG TIKA_VERSION='1.25'
 ARG CHECK_SIG=true
+
+SHELL ["/bin/bash", "-o", "pipefail","-c"]
 
 ENV NEAREST_TIKA_SERVER_URL="https://www.apache.org/dyn/closer.cgi/tika/tika-server-${TIKA_VERSION}.jar?filename=tika/tika-server-${TIKA_VERSION}.jar&action=download" \
     ARCHIVE_TIKA_SERVER_URL="https://archive.apache.org/dist/tika/tika-server-${TIKA_VERSION}.jar" \
@@ -10,10 +13,9 @@ ENV NEAREST_TIKA_SERVER_URL="https://www.apache.org/dyn/closer.cgi/tika/tika-ser
     ARCHIVE_TIKA_SERVER_ASC_URL="https://archive.apache.org/dist/tika/tika-server-${TIKA_VERSION}.jar.asc" \
     TIKA_VERSION=$TIKA_VERSION
 
+# Adicao portugues para o tesseract-ocr-pot
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y --no-install-recommends install gnupg2 wget \
-        $JRE gdal-bin tesseract-ocr \
-        tesseract-ocr-eng tesseract-ocr-por \
-        # Fonts
+        $JRE gdal-bin tesseract-ocr tesseract-ocr-eng tesseract-ocr-por \
         && echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
         && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y xfonts-utils fonts-freefont-ttf fonts-liberation ttf-mscorefonts-installer wget cabextract \
         && apt-get clean -y \
