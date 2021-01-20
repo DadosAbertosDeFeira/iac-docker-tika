@@ -14,6 +14,7 @@ jobs:
     steps:
       - run: |
           echo "Tika v: ${{ github.event.inputs.version }}"
+          echo "Repo : ${{ secrets.REPO }}"
   lint:
     name: Lint do Dockerfile
     runs-on: ubuntu-latest
@@ -26,9 +27,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: Dockerfile
-  build:
-    name: Build do Container
-    needs: lint
+  test:
+    name: Testando funcionamento do container 
+    needs: lint 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build - Stack
+        run: docker-compose up -d
+
+      - name: Teste
+        run: docker run --network container:tika-server
+              appropriate/curl -s --retry 10
+              --retry-connrefused http://localhost:9998/
+
+  push:
+    name: Publica o Container
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -66,7 +90,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: bemanuelpe/tikaserver:${{ github.event.inputs.version }}
+          tags: ${{ secrets.REPO }}/tikaserver:${{ github.event.inputs.version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
