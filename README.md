@@ -2,7 +2,7 @@
 
 Requisitos
 ----------
-Informar a versão do TIKA Server através do ARG TIKA_VERSION 
+Informar a versão do TIKA Server através do ARG TIKA_VERSION
 
 Necessário ter cadastrados no secrets:
 
@@ -11,10 +11,6 @@ Necessário ter cadastrados no secrets:
  |:----- |-----|
  | DOCKERHUB_USERNAME  | Usuario do Docker |
  | DOCKERHUB_TOKEN  | Token do Usuario |
-
-
-
-
 
 Actions
 -------
