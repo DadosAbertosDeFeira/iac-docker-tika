@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  tika:
+    container_name: tika-server
+    build: .
+    image: '${{ secrets.REPO }}:$INPUT_VERSION'
+    ports:
+      - "9998:9998"
