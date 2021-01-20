@@ -67,11 +67,11 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: bemanuelpe/tikaserver:${{ input.version }}
+          tags: bemanuelpe/tikaserver:${{ github.event.inputs.version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
-              TIKA_VERSION=${{ input.version }}
+              TIKA_VERSION=${{ github.event.inputs.version }}
 
       - name: Digest
         run: echo ${{ steps.docker_build.outputs.digest }}
