@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: lint
         uses: luke142367/Docker-Lint-Action@v1.1.1
         env:
@@ -28,8 +29,8 @@ jobs:
         with:
           target: Dockerfile
   test:
-    name: Testando funcionamento do container 
-    needs: lint 
+    name: Testando funcionamento do container
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,7 +47,7 @@ jobs:
         run: docker-compose up -d
 
       - name: Teste
-        run: docker run --network container:tika-server
+        run: adocker run --network container:tika-server
               appropriate/curl -s --retry 10
               --retry-connrefused http://localhost:9998/
 
