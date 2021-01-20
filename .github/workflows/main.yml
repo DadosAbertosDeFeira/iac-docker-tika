@@ -47,7 +47,7 @@ jobs:
         run: docker-compose up -d
 
       - name: Teste
-        run: adocker run --network container:tika-server
+        run: docker run --network container:tika-server
               appropriate/curl -s --retry 10
               --retry-connrefused http://localhost:9998/
 
