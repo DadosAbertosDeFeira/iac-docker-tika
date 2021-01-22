@@ -53,6 +53,7 @@ jobs:
 
   push:
     name: Publica o Container
+    if: github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-18.04
     steps:
