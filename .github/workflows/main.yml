@@ -1,12 +1,6 @@
 # Controls when the action will run.
 name: Fluxo para construcao e publicacao do container
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Versao do Tika a ser utilizada'
-        required: true
-        default: 1.25
+on: on: [push, pull_request]
 
 jobs:
   printInputs:
