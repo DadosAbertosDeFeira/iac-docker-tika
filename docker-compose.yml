@@ -1,0 +1,8 @@
+version: '3.7'
+
+services:
+  tika:
+    container_name: tika-server
+    build: .
+    ports:
+      - "9998:9998"

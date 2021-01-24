@@ -1,0 +1,90 @@
+# Controls when the action will run.
+name: Fluxo para construcao e publicacao do container
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: Lint do Dockerfile
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: lint
+        uses: luke142367/Docker-Lint-Action@v1.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          target: Dockerfile
+  test:
+    name: Testando funcionamento do container
+    needs: lint
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build - Stack
+        run: docker-compose up -d
+
+      - name: Teste
+        run: docker run --network container:tika-server
+              appropriate/curl -s --retry 10
+              --retry-connrefused http://localhost:9998/
+
+  push:
+    name: Publica o Container
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Ativa QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: linux/amd64
+
+      - name: BuildX - Suporte remote-cache, secrets, etc...
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ github.event.inputs.version }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          build-args: |
+              TIKA_VERSION=${{ github.event.inputs.version }}
+
+      - name: Digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
