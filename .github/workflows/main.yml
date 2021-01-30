@@ -2,6 +2,9 @@
 name: Fluxo para construcao e publicacao do container
 on: [push, pull_request]
 
+env:
+  tika_version: '1.25'
+
 jobs:
   lint:
     name: Lint do Dockerfile
@@ -80,11 +83,12 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ github.event.inputs.version }}
+          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ env.tika_version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
-              TIKA_VERSION=${{ github.event.inputs.version }}
+              TIKA_VERSION=${{ env.tika_version }}
 
       - name: Digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        run: echo ${{ env.tika_version }}
+
