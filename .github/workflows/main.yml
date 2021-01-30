@@ -90,5 +90,5 @@ jobs:
               TIKA_VERSION=${{ env.tika_version }}
 
       - name: Digest
-        run: echo ${{ env.tika_version }}
+        run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"
 
