@@ -14,15 +14,15 @@ O CI usado é o próprio [GitHub Actions](https://github.com/features/actions), 
 
 - `job 01` - Lint do Dockerfile
 - `job 02` - Teste do container
-- `job 03` - Scan da Imagem
-- `job 04` - Build e envio para o Docker Hub
+- `job 03` - Build e envio para o Docker Hub
+- `job 04` - Scan da Imagem
 
 ### job 01 - Lint do Dockerfile
 
 Esse job utiliza dois steps:
 
 - `step 01-01` - [Checkout](https://github.com/marketplace/actions/checkout)
-- `step 01-02` - [lint](https://github.com/luke142367/Docker-Lint-Action)
+- `step 01-02` - [lint](https://github.com/marketplace/actions/docker-lint)
 
 ### job 02 - Teste do container
 
@@ -47,11 +47,12 @@ Esse job utiliza sete steps:
 
 ### job 04 - Scan de Vunerabilidades
 
-Esse job utiliza quatro steps:
+Esse job utiliza três steps:
 
 - `step 04-01` - [Checkout](https://github.com/marketplace/actions/checkout)
 - `step 04-02` - Build an image from Dockerfile
 - `step 04-03` - [Scanear Imagem com Trivy](https://github.com/marketplace/actions/aqua-security-trivy)
+
 ## :three: - Requisitos
 
 Informar a versão do TIKA Server através do ARG TIKA_VERSION
