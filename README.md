@@ -33,25 +33,27 @@ Esse job utiliza quatro steps:
 - `step 02-03` - Build - Stack
 - `step 02-04` - Teste
 
-### job 03 - Build e envio para o Docker Hub
-
-Esse job utiliza sete steps:
-
-- `step 03-01` - [Checkout](https://github.com/marketplace/actions/checkout)
-- `step 03-02` - Ativa QEMU
-- `step 03-03` - BuildX - Suporte remote-cache, secrets, etc...
-- `step 03-04` - [Cache Docker layers](https://github.com/marketplace/actions/cache)
-- `step 03-05` - [Login DockerHub](https://github.com/marketplace/actions/docker-login)
-- `step 03-06` - [Build and Push](https://github.com/marketplace/actions/build-and-push-docker-images)
-- `step 03-07` - Digest
-
-### job 04 - Scan de Vunerabilidades
+### job 03 - Scan de Vunerabilidades
 
 Esse job utiliza três steps:
 
+- `step 03-01` - [Checkout](https://github.com/marketplace/actions/checkout)
+- `step 03-02` - Build an image from Dockerfile
+- `step 03-03` - [Scanear Imagem com Trivy](https://github.com/marketplace/actions/aqua-security-trivy)
+
+### job 04 - Build e envio para o Docker Hub
+
+Esse job utiliza sete steps:
+
 - `step 04-01` - [Checkout](https://github.com/marketplace/actions/checkout)
-- `step 04-02` - Build an image from Dockerfile
-- `step 04-03` - [Scanear Imagem com Trivy](https://github.com/marketplace/actions/aqua-security-trivy)
+- `step 04-02` - Ativa QEMU
+- `step 04-03` - BuildX - Suporte remote-cache, secrets, etc...
+- `step 04-04` - [Cache Docker layers](https://github.com/marketplace/actions/cache)
+- `step 04-05` - [Login DockerHub](https://github.com/marketplace/actions/docker-login)
+- `step 04-06` - [Build and Push](https://github.com/marketplace/actions/build-and-push-docker-images)
+- `step 04-07` - Digest
+
+
 
 ## :three: - Requisitos
 
