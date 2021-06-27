@@ -14,8 +14,12 @@ O CI usado é o próprio [GitHub Actions](https://github.com/features/actions), 
 
 - `job 01` - Lint do Dockerfile
 - `job 02` - Teste do container
-- `job 03` - Build e envio para o Docker Hub
-- `job 04` - Scan da Imagem
+- `job 03` - Scan da Imagem
+- `job 04` - Build e envio para o Docker Hub
+
+![fluxo-ci](img/fluxo-ci.png)
+
+Todos as etapas estão interligadas, conforme imagem acima, de forma que o estágio seguinte só executa se o anterior der sucesso. Os três primeiros executam em todo `push` e `pull request` gerado no repositório. A quarta etapa só executa 
 
 ### job 01 - Lint do Dockerfile
 
