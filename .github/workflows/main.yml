@@ -75,12 +75,12 @@ jobs:
 #---------------------step 03-02-----------------------
       - name: Build an image from Dockerfile
         run: |
-          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+          docker build -t tika-image .
 #---------------------step 03-03-----------------------
       - name: Scanear Imagem com Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          image-ref: 'tika-image'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
