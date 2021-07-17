@@ -26,7 +26,7 @@ Todos as etapas estão interligadas, conforme imagem acima, de forma que o está
 Esse job utiliza dois steps:
 
 - `step 01-01` - [Checkout](https://github.com/marketplace/actions/checkout)
-- `step 01-02` - [lint](https://github.com/marketplace/actions/docker-lint)
+- `step 01-02` - [lint](https://github.com/marketplace/actions/hadolint-action)
 
 ### job 02 - Teste do container
 
