@@ -1,140 +1,140 @@
-# #------------------------------------------------------
-# #                      Cabeçalho
-# #------------------------------------------------------
-# # Nome da action e quando ela é disparada
-# name: Fluxo para construcao e publicacao do container
-# on: [push, pull_request]
+#------------------------------------------------------
+#                      Cabeçalho
+#------------------------------------------------------
+# Nome da action e quando ela é disparada
+name: Fluxo para construcao e publicacao do container
+on: [push, pull_request]
 
-# #------------------------------------------------------
-# #                      Variáveis
-# #------------------------------------------------------
-# env:
-#   tika_version: '1.27'
+#------------------------------------------------------
+#                      Variáveis
+#------------------------------------------------------
+env:
+  tika_version: '1.27'
 
-# #------------------------------------------------------
-# #                   Início dos jobs
-# #------------------------------------------------------
-# jobs:
+#------------------------------------------------------
+#                   Início dos jobs
+#------------------------------------------------------
+jobs:
 
-# #------------------------------------------------------
-# #              job 01 - Lint do Dockerfile
-# #------------------------------------------------------
-#   lint:
-#     name: Lint do Dockerfile
-#     runs-on: ubuntu-18.04
-#     steps:
-# #---------------------step 01-01-----------------------
-#       - name: Checkout
-#         uses: actions/checkout@v2
-# #---------------------step 01-02-----------------------
-#       - uses: hadolint/hadolint-action@v1.5.0
-#         with:
-#           dockerfile: Dockerfile
+#------------------------------------------------------
+#              job 01 - Lint do Dockerfile
+#------------------------------------------------------
+  lint:
+    name: Lint do Dockerfile
+    runs-on: ubuntu-18.04
+    steps:
+#---------------------step 01-01-----------------------
+      - name: Checkout
+        uses: actions/checkout@v2
+#---------------------step 01-02-----------------------
+      - uses: hadolint/hadolint-action@v1.5.0
+        with:
+          dockerfile: Dockerfile
 
-# #------------------------------------------------------
-# #              job 02 - Teste do container
-# #------------------------------------------------------
-#   test:
-#     name: Testando funcionamento do container
-#     needs: lint
-#     runs-on: ubuntu-18.04
-#     steps:
-# #---------------------step 02-01-----------------------
-#       - uses: actions/checkout@v2
-# #---------------------step 02-02-----------------------
-#       - name: Cache Docker layers
-#         uses: actions/cache@v2
-#         with:
-#           path: /tmp/.buildx-cache
-#           key: ${{ runner.os }}-buildx-${{ github.sha }}
-#           restore-keys: |
-#             ${{ runner.os }}-buildx-
-# #---------------------step 02-03-----------------------
-#       - name: Build - Stack
-#         run: docker-compose up -d
-# #---------------------step 02-04-----------------------
-#       - name: Teste
-#         run: docker run --network container:tika-server
-#               appropriate/curl -s --retry 10
-#               --retry-connrefused http://localhost:9998/
+#------------------------------------------------------
+#              job 02 - Teste do container
+#------------------------------------------------------
+  test:
+    name: Testando funcionamento do container
+    needs: lint
+    runs-on: ubuntu-18.04
+    steps:
+#---------------------step 02-01-----------------------
+      - uses: actions/checkout@v2
+#---------------------step 02-02-----------------------
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+#---------------------step 02-03-----------------------
+      - name: Build - Stack
+        run: docker-compose up -d
+#---------------------step 02-04-----------------------
+      - name: Teste
+        run: docker run --network container:tika-server
+              appropriate/curl -s --retry 10
+              --retry-connrefused http://localhost:9998/
 
-# #------------------------------------------------------
-# #              job 03 - Scan da imagem
-# #------------------------------------------------------
-#   scan:
-#     name: Scan da Imagem
-#     needs: test
-#     runs-on: ubuntu-18.04
-#     steps:
-# #---------------------step 03-01-----------------------
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-# #---------------------step 03-02-----------------------
-#       - name: Build an image from Dockerfile
-#         run: |
-#           docker build -t tika-image .
-# #---------------------step 03-03-----------------------
-#       - name: Scanear Imagem com Trivy
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#           image-ref: 'tika-image'
-#           format: 'table'
-#           exit-code: '1'
-#           ignore-unfixed: true
-#           vuln-type: 'os,library'
-#           severity: 'CRITICAL,HIGH'
+#------------------------------------------------------
+#              job 03 - Scan da imagem
+#------------------------------------------------------
+  scan:
+    name: Scan da Imagem
+    needs: test
+    runs-on: ubuntu-18.04
+    steps:
+#---------------------step 03-01-----------------------
+      - name: Checkout code
+        uses: actions/checkout@v2
+#---------------------step 03-02-----------------------
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t tika-image .
+#---------------------step 03-03-----------------------
+      - name: Scanear Imagem com Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'tika-image'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
-# #------------------------------------------------------
-# # job 04 - Build e Push do container para o Docker Hub
-# #------------------------------------------------------
-#   push:
-#     name: Publica o Container
-#     if: github.ref == 'refs/heads/main'
-#     needs: scan
-#     runs-on: ubuntu-18.04
-#     steps:
-# #---------------------step 04-01-----------------------
-#       - name: Checkout
-#         uses: actions/checkout@v2
-# #---------------------step 04-02-----------------------
-#       - name: Ativa QEMU
-#         uses: docker/setup-qemu-action@v1
-#         with:
-#           platforms: linux/amd64
-# #---------------------step 04-03-----------------------
-#       - name: BuildX - Suporte remote-cache, secrets, etc...
-#         id: buildx
-#         uses: docker/setup-buildx-action@v1
-# #---------------------step 04-04-----------------------
-#       - name: Cache Docker layers
-#         uses: actions/cache@v2
-#         with:
-#           path: /tmp/.buildx-cache
-#           key: ${{ runner.os }}-buildx-${{ github.sha }}
-#           restore-keys: |
-#             ${{ runner.os }}-buildx-
-# #---------------------step 04-05-----------------------
-#       - name: Login DockerHub
-#         uses: docker/login-action@v1
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_TOKEN }}
-# #---------------------step 04-06-----------------------
-#       - name: Build and Push
-#         id: docker_build
-#         uses: docker/build-push-action@v2
-#         with:
-#           builder: ${{ steps.buildx.outputs.name }}
-#           context: .
-#           file: ./Dockerfile
-#           platforms: linux/amd64
-#           push: true
-#           tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ env.tika_version }}
-#           cache-from: type=local,src=/tmp/.buildx-cache
-#           cache-to: type=local,dest=/tmp/.buildx-cache
-#           build-args: |
-#               TIKA_VERSION=${{ env.tika_version }}
-# #---------------------step 04-07-----------------------
-#       - name: Digest
-#         run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"
+#------------------------------------------------------
+# job 04 - Build e Push do container para o Docker Hub
+#------------------------------------------------------
+  push:
+    name: Publica o Container
+    if: github.ref == 'refs/heads/main'
+    needs: scan
+    runs-on: ubuntu-18.04
+    steps:
+#---------------------step 04-01-----------------------
+      - name: Checkout
+        uses: actions/checkout@v2
+#---------------------step 04-02-----------------------
+      - name: Ativa QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: linux/amd64
+#---------------------step 04-03-----------------------
+      - name: BuildX - Suporte remote-cache, secrets, etc...
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+#---------------------step 04-04-----------------------
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+#---------------------step 04-05-----------------------
+      - name: Login DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#---------------------step 04-06-----------------------
+      - name: Build and Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ env.tika_version }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          build-args: |
+              TIKA_VERSION=${{ env.tika_version }}
+#---------------------step 04-07-----------------------
+      - name: Digest
+        run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"
 

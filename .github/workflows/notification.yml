@@ -22,5 +22,5 @@ jobs:
         with:
           webhook_id: ${{ secrets.WEBHOOK_ID }}
           webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-          message: "Teste de mensagem. O evento disparado pelo Github é: ${{ github.event_name }}"
+          message: "Vulnerabilidades encontradas na imagem tika-server."
             
