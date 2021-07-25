@@ -9,7 +9,7 @@ on: [push, pull_request]
 #                      Variáveis
 #------------------------------------------------------
 env:
-  tika_version: '1.27'
+  tika_version: '2.0.0'
 
 #------------------------------------------------------
 #                   Início dos jobs
@@ -55,7 +55,7 @@ jobs:
 #---------------------step 02-04-----------------------
       - name: Teste
         run: docker run --network container:tika-server
-              appropriate/curl -s --retry 10
+              appropriate/curl -s --connect-timeout 10 --retry 10
               --retry-connrefused http://localhost:9998/
 
 #------------------------------------------------------
