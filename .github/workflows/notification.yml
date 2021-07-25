@@ -1,0 +1,26 @@
+#------------------------------------------------------
+#                      Cabeçalho
+#------------------------------------------------------
+# Nome da action e quando ela é disparada
+name: Notificacoes
+on:
+  workflow_run:
+    workflows: ["Scan semanal da imagem docker"]
+    types:
+      - completed
+
+#------------------------------------------------------
+#                   Início dos jobs
+#------------------------------------------------------
+jobs:
+  on-failure:
+    runs-on: ubuntu-18.04
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: envia mensagem
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.WEBHOOK_ID }}
+          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+          message: "Teste de mensagem. O evento disparado pelo Github é: ${{ github.event_name }}"
+            
