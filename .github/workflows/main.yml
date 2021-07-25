@@ -55,7 +55,7 @@ jobs:
 #---------------------step 02-04-----------------------
       - name: Teste
         run: |
-          docker run --network container:tika-server
+          docker run --network container:tika-server \
           curlimages/curl -s --connect-timeout 10 --retry 10 \
           --retry-connrefused http://localhost:9998/
 
