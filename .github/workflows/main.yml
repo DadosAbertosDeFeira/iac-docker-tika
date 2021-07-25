@@ -35,7 +35,7 @@ jobs:
 #              job 02 - Teste do container
 #------------------------------------------------------
   test:
-    name: Testando funcionamento do container
+    name: Teste do container
     needs: lint
     runs-on: ubuntu-18.04
     steps:
@@ -54,9 +54,10 @@ jobs:
         run: docker-compose up -d
 #---------------------step 02-04-----------------------
       - name: Teste
-        run: docker run --network container:tika-server
-              appropriate/curl -s --connect-timeout 10 --retry 10
-              --retry-connrefused http://localhost:9998/
+        run: |
+          docker run --network container:tika-server
+          curlimages/curl -s --connect-timeout 10 --retry 10 \
+          --retry-connrefused http://localhost:9998/
 
 #------------------------------------------------------
 #              job 03 - Scan da imagem
@@ -88,7 +89,7 @@ jobs:
 # job 04 - Build e Push do container para o Docker Hub
 #------------------------------------------------------
   push:
-    name: Publica o Container
+    name: Publica a Imagem
     if: github.ref == 'refs/heads/main'
     needs: scan
     runs-on: ubuntu-18.04
