@@ -2,8 +2,7 @@ ARG TIKA_VERSION=2.0.0
 
 FROM apache/tika:$TIKA_VERSION
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    && apt-get update \
+RUN apt-get update \
     && apt-get -y --no-install-recommends install \
     # Pacote adicionado na versão mais recente para sanar quebra do CI por vulnerabilidade (CVE-2021-33910)
     libsystemd0=245.4-4ubuntu3.11 \
