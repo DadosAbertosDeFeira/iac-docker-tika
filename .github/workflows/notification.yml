@@ -22,5 +22,5 @@ jobs:
         with:
           webhook_id: ${{ secrets.WEBHOOK_ID }}
           webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-          message: "Vulnerabilidades encontradas na imagem tika-server."
+          message: "Vulnerabilidades encontradas na imagem tika-server. Favor checar os repositório https://github.com/DadosAbertosDeFeira/iac-docker-tika"
             

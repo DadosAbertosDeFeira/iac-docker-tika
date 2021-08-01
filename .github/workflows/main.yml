@@ -90,7 +90,7 @@ jobs:
 #------------------------------------------------------
   push:
     name: Publica a Imagem
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     needs: scan
     runs-on: ubuntu-18.04
     steps:
@@ -138,4 +138,3 @@ jobs:
 #---------------------step 04-07-----------------------
       - name: Digest
         run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"
-
