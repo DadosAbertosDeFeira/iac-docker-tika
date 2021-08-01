@@ -6,7 +6,7 @@
 
 Criar a imagem Docker do [Tika Server](https://cwiki.apache.org/confluence/display/TIKA/TikaServer) com as modificações necessárias para a utilização no projeto [Dados Abertos de Feira](https://www.dadosabertosdefeira.com.br) (ver [Dockerfile](https://github.com/DadosAbertosDeFeira/iac-docker-tika/blob/main/Dockerfile)). 
 
-Será utilizada a imagem base do [Apache Tika Server](https://hub.docker.com/r/apache/tika), travada na versão [2.0.0](https://hub.docker.com/layers/apache/tika/1.25/images/sha256-5a02aa906dad24c2b65a53fc20f946ecdc495c3ebd04e680dfb953d3658706af?context=explore) com a instalação do pacote [tesseract-ocr-por](https://packages.debian.org/sid/graphics/tesseract-ocr-por).
+Será utilizada a imagem base do [Apache Tika Server](https://hub.docker.com/r/apache/tika), travada na versão [2.0.0](https://hub.docker.com/layers/apache/tika/2.0.0/images/sha256-e8e1bc87e479c9729ba14658c72162d2666eed55b0702d09555c6ff71b6a9c12?context=explore) com a instalação do pacote [tesseract-ocr-por](https://packages.debian.org/sid/graphics/tesseract-ocr-por).
 
 Obs: outros pacotes podem ser instalados em virtude de vulnerabilidades encontradas.
 
