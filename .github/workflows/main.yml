@@ -9,7 +9,7 @@ on: [push, pull_request]
 #                      Variáveis
 #------------------------------------------------------
 env:
-  tika_version: '1.27'
+  tika_version: '2.0.0'
 
 #------------------------------------------------------
 #                   Início dos jobs
@@ -35,7 +35,7 @@ jobs:
 #              job 02 - Teste do container
 #------------------------------------------------------
   test:
-    name: Testando funcionamento do container
+    name: Teste do container
     needs: lint
     runs-on: ubuntu-18.04
     steps:
@@ -54,16 +54,18 @@ jobs:
         run: docker-compose up -d
 #---------------------step 02-04-----------------------
       - name: Teste
-        run: docker run --network container:tika-server
-              appropriate/curl -s --retry 10
-              --retry-connrefused http://localhost:9998/
+        run: |
+          sleep 10
+          docker run --network container:tika-server \
+          curlimages/curl -v -s --connect-timeout 10 --retry 10 \
+          --retry-connrefused http://localhost:9998/
 
 #------------------------------------------------------
 #              job 03 - Scan da imagem
 #------------------------------------------------------
   scan:
     name: Scan da Imagem
-    needs: test
+    needs: lint
     runs-on: ubuntu-18.04
     steps:
 #---------------------step 03-01-----------------------
@@ -88,9 +90,9 @@ jobs:
 # job 04 - Build e Push do container para o Docker Hub
 #------------------------------------------------------
   push:
-    name: Publica o Container
-    if: github.ref == 'refs/heads/main'
-    needs: scan
+    name: Publica a Imagem
+    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    needs: [scan, test]
     runs-on: ubuntu-18.04
     steps:
 #---------------------step 04-01-----------------------
@@ -137,4 +139,3 @@ jobs:
 #---------------------step 04-07-----------------------
       - name: Digest
         run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"
-

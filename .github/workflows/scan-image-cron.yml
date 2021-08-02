@@ -1,0 +1,44 @@
+#------------------------------------------------------
+#                      Cabeçalho
+#------------------------------------------------------
+# Nome da action e quando ela é disparada
+name: Scan semanal da imagem docker
+on:
+  schedule:
+    - cron: '0 0 * * FRI' # Rodará toda sexta-feira
+
+#------------------------------------------------------
+#                      Variáveis
+#------------------------------------------------------
+env:
+  tika_version: '2.0.0'
+
+#------------------------------------------------------
+#                   Início dos jobs
+#------------------------------------------------------
+jobs:
+
+#------------------------------------------------------
+#              job 01 - Scan da imagem
+#------------------------------------------------------
+  scan:
+    name: Scan da Imagem
+    runs-on: ubuntu-18.04
+    steps:
+#---------------------step 01-01-----------------------
+      - name: Checkout code
+        uses: actions/checkout@v2
+#---------------------step 01-02-----------------------
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t tika-image .
+#---------------------step 01-03-----------------------
+      - name: Scanear Imagem com Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'tika-image'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
