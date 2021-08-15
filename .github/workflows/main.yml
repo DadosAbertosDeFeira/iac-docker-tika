@@ -3,7 +3,16 @@
 #------------------------------------------------------
 # Nome da action e quando ela é disparada
 name: Fluxo para construcao e publicacao do container
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - created
 
 #------------------------------------------------------
 #                      Variáveis
