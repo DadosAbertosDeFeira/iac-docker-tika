@@ -64,7 +64,7 @@ jobs:
 
 #---------------------step 02-03-----------------------
       - name: Build - Stack
-        run: docker-compose up -d -f docker-compose-test
+        run: docker-compose up -d -f docker-compose-test.yml
 #---------------------step 02-04-----------------------
       - name: Teste
         run: |
