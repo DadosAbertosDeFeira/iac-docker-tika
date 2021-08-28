@@ -58,17 +58,20 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-#---------------------step 02-03-----------------------
-      - name: Tag para dockercompse
-        run: |
-          set -ex \
-          && echo ${{ env.tika_version }} \
-          && tika_version=${{ env.tika_version }} \
-          && envsubst '$tika_version' <docker-compose.yml > docker-compose-test.yml \
-          && cat docker-compose-test.yml
+# #---------------------step 02-03-----------------------
+#       - name: Tag para dockercompse
+#         run: |
+#           set -ex \
+#           && echo ${{ env.tika_version }} \
+#           && tika_version=${{ env.tika_version }} \
+#           && envsubst '$tika_version' <docker-compose.yml > docker-compose-test.yml \
+#           && cat docker-compose-test.yml
 #---------------------step 02-04-----------------------
       - name: Build - Stack
-        run: docker-compose up -d -f docker-compose-test.yml
+        run: |
+          set -ex \
+          && docker-compose build --build-arg TIKA_VERSION=${{ env.tika_version }} \ 
+          && docker-compose up -d
 #---------------------step 02-05-----------------------
       - name: Teste
         run: |
