@@ -62,6 +62,7 @@ jobs:
       - name: Tag para dockercompse
         run: |
           set -ex \
+          && echo ${{ env.tika_version }} \
           && envsubst '${{ env.tika_version }}' <docker-compose.yml > docker-compose-test.yml \
           && cat docker-compose-test.yml
 #---------------------step 02-03-----------------------
