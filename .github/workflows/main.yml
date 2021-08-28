@@ -60,8 +60,10 @@ jobs:
             ${{ runner.os }}-buildx-
 #---------------------step 02-03-----------------------
       - name: Tag para dockercompse
-        run: envsubst '${{ env.tika_version }}' <docker-compose.yml > docker-compose-test.yml
-
+        run: |
+          set -ex \
+          && envsubst '${{ env.tika_version }}' <docker-compose.yml > docker-compose-test.yml \
+          && cat docker-compose-test.yml
 #---------------------step 02-03-----------------------
       - name: Build - Stack
         run: docker-compose up -d -f docker-compose-test.yml
