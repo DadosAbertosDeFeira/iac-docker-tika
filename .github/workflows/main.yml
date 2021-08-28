@@ -59,8 +59,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 #---------------------step 02-03-----------------------
+      - name: Tag para dockercompse
+        run: envsubst '${{ env.tika_version }}' <docker-compose.yml > docker-compose-test.yml
+
+#---------------------step 02-03-----------------------
       - name: Build - Stack
-        run: docker-compose up -d
+        run: docker-compose up -d -f docker-compose-test
 #---------------------step 02-04-----------------------
       - name: Teste
         run: |
@@ -83,7 +87,7 @@ jobs:
 #---------------------step 03-02-----------------------
       - name: Build an image from Dockerfile
         run: |
-          docker build -t tika-image .
+          docker build --build-arg TIKA_VERSION=${{ env.tika_version }} -t tika-image .
 #---------------------step 03-03-----------------------
       - name: Scanear Imagem com Trivy
         uses: aquasecurity/trivy-action@master

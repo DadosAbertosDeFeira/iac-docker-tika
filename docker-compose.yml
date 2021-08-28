@@ -4,5 +4,7 @@ services:
   tika:
     container_name: tika-server
     build: .
+    args: 
+      TIKA_VERSION: "$tika_version"
     ports:
       - "9998:9998"
