@@ -70,8 +70,8 @@ jobs:
       - name: Build - Stack
         run: |
           set -ex \
-          && docker-compose build --build-arg TIKA_VERSION=${{ env.tika_version }} \ 
-          && docker-compose up -d
+          && docker-compose build --build-arg TIKA_VERSION=${{ env.tika_version }} \
+          && docker-compose up -d tika
 #---------------------step 02-05-----------------------
       - name: Teste
         run: |
