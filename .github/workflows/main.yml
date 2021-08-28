@@ -63,8 +63,8 @@ jobs:
         run: |
           set -ex \
           && echo ${{ env.tika_version }} \
-          && tika=${{ env.tika_version }} \
-          && envsubst '$tika' <docker-compose.yml > docker-compose-test.yml \
+          && tika_version=${{ env.tika_version }} \
+          && envsubst '$tika_version' <docker-compose.yml > docker-compose-test.yml \
           && cat docker-compose-test.yml
 #---------------------step 02-04-----------------------
       - name: Build - Stack
