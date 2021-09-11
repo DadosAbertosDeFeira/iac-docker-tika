@@ -60,7 +60,10 @@ jobs:
             ${{ runner.os }}-buildx-
 #---------------------step 02-03-----------------------
       - name: Build - Stack
-        run: docker-compose up -d
+        run: |
+          set -ex \
+          && docker-compose build --build-arg TIKA_VERSION=${{ env.tika_version }} \
+          && docker-compose up -d tika
 #---------------------step 02-04-----------------------
       - name: Teste
         run: |
@@ -83,7 +86,7 @@ jobs:
 #---------------------step 03-02-----------------------
       - name: Build an image from Dockerfile
         run: |
-          docker build -t tika-image .
+          docker build --build-arg TIKA_VERSION=${{ env.tika_version }} -t tika-image .
 #---------------------step 03-03-----------------------
       - name: Scanear Imagem com Trivy
         uses: aquasecurity/trivy-action@master
@@ -140,7 +143,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ env.tika_version }}
+          tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ github.event.release.tag_name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
