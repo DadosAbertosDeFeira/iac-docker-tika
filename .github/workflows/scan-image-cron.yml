@@ -3,10 +3,9 @@
 #------------------------------------------------------
 # Nome da action e quando ela é disparada
 name: Scan semanal da imagem docker
-on: workflow_dispatch
-# on:
-#   schedule:
-#     - cron: '0 0 * * FRI' # Rodará toda sexta-feira
+on:
+  schedule:
+    - cron: '0 0 * * FRI' # Rodará toda sexta-feira
 
 #------------------------------------------------------
 #                      Variáveis
