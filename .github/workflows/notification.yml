@@ -31,7 +31,7 @@ jobs:
       - name: cria issue
         run: |
           if [[ $(gh issue list > /tmp/issue && grep "Corrigir vulnerabilidade encontrada na imagem Docker" /tmp/issue) ]]; \
-          then echo "Já existi issue aberta sobre a vulnerabilidade"; \
+          then echo "Já existe issue aberta sobre a vulnerabilidade"; \
           else gh issue create --title "Corrigir vulnerabilidade encontrada na imagem Docker" \
           --body "Vulnerabilidades foram encontradas pelo scan semanal. Favor checar os logs do CI para mais informações."; fi
         env:
