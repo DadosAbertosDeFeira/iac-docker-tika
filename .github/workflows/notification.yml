@@ -17,10 +17,22 @@ jobs:
     runs-on: ubuntu-18.04
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
+#---------------------step 01-01-----------------------    
       - name: envia mensagem
         uses: appleboy/discord-action@master
         with:
           webhook_id: ${{ secrets.WEBHOOK_ID }}
           webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
           message: "Vulnerabilidades encontradas na imagem tika-server. Favor checar o repositório https://github.com/DadosAbertosDeFeira/iac-docker-tika"
-            
+#---------------------step 01-02-----------------------
+      - name: Checkout code
+        uses: actions/checkout@v2
+#---------------------step 01-03-----------------------
+      - name: cria issue
+        run: |
+          if [[ $(gh issue list > /tmp/issue && grep "Corrigir vulnerabilidade encontrada na imagem Docker" /tmp/issue) ]]; \
+          then echo "Já existe issue aberta sobre a vulnerabilidade"; \
+          else gh issue create --title "Corrigir vulnerabilidade encontrada na imagem Docker" \
+          --body "Vulnerabilidades foram encontradas pelo scan semanal. Favor checar os logs do CI para mais informações."; fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
