@@ -18,7 +18,7 @@ on:
 #                      Variáveis
 #------------------------------------------------------
 env:
-  tika_version: '2.3.0'
+  tika_version: '2.4.0'
 
 #------------------------------------------------------
 #                   Início dos jobs
@@ -30,7 +30,7 @@ jobs:
 #------------------------------------------------------
   lint:
     name: Lint do Dockerfile
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
 #---------------------step 01-01-----------------------
       - name: Checkout
@@ -46,7 +46,7 @@ jobs:
   test:
     name: Teste do container
     needs: lint
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
 #---------------------step 02-01-----------------------
       - uses: actions/checkout@v2
@@ -78,7 +78,7 @@ jobs:
   scan:
     name: Scan da Imagem
     needs: lint
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
 #---------------------step 03-01-----------------------
       - name: Checkout code
@@ -105,7 +105,7 @@ jobs:
     name: Publica a Imagem
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     needs: [scan, test]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
 #---------------------step 04-01-----------------------
       - name: Checkout
