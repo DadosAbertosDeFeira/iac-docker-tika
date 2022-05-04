@@ -1,8 +1,6 @@
 ARG TIKA_VERSION
 
-FROM midgardhero/tika:$TIKA_VERSION
-
-USER root
+FROM apache/tika:$TIKA_VERSION
 
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
@@ -14,7 +12,3 @@ RUN apt-get update \
     libexpat1=2.2.9-1ubuntu0.4 \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# retorna o usuário para o padrão do TIKA
-# https://github.com/apache/tika-docker/blob/a4556b9e774f4c576b198836cedae0597ed59506/minimal/Dockerfile#L19
-USER 35002:35002
