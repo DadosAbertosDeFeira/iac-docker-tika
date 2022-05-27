@@ -1,6 +1,4 @@
-ARG TIKA_VERSION
-
-FROM apache/tika:$TIKA_VERSION
+FROM apache/tika:2.4.0
 
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \

@@ -62,7 +62,7 @@ jobs:
       - name: Build - Stack
         run: |
           set -ex \
-          && docker-compose build --build-arg TIKA_VERSION=${{ env.tika_version }} \
+          docker-compose build \
           && docker-compose up -d tika
 #---------------------step 02-04-----------------------
       - name: Teste
@@ -86,7 +86,7 @@ jobs:
 #---------------------step 03-02-----------------------
       - name: Build an image from Dockerfile
         run: |
-          docker build --build-arg TIKA_VERSION=${{ env.tika_version }} -t tika-image .
+          docker build -t tika-image .
 #---------------------step 03-03-----------------------
       - name: Scanear Imagem com Trivy
         uses: aquasecurity/trivy-action@master
@@ -146,8 +146,6 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_ORGANIZATION }}/tika-server:${{ github.event.release.tag_name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-          build-args: |
-              TIKA_VERSION=${{ env.tika_version }}
 #---------------------step 04-07-----------------------
       - name: Digest
         run: echo "Versão usada para fazer push do Tika é -> ${{ env.tika_version }}"

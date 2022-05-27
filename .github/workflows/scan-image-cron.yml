@@ -31,7 +31,7 @@ jobs:
 #---------------------step 01-02-----------------------
       - name: Build an image from Dockerfile
         run: |
-          docker build --build-arg TIKA_VERSION=${{ env.tika_version }} -t tika-image .
+          docker build -t tika-image .
 #---------------------step 01-03-----------------------
       - name: Scanear Imagem com Trivy
         uses: aquasecurity/trivy-action@master
